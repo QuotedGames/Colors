@@ -13,21 +13,6 @@
 
 @interface GameScene()
 
-/**
-    Contains list of colors to be used for blocks and buttons
- */
-@property (nonatomic, retain) NSArray * _colors;
-
-
-/**
-    Defines color for area without blocks (blocks were deleted)
- */
-@property (nonatomic, retain) UIColor * _emptyColor;
-
-/**
-    Scene background color
- */
-@property (nonatomic, retain) UIColor * _backgroundColor;
 
 
 /**
@@ -158,16 +143,6 @@
     
     self._emptyColorValue = @"99";
     
-    UIColor *blueColor      = [UIColor colorWithRed:0.0f green:128.0f/255.0f blue:1.0f alpha:self._colorAlpha];
-    UIColor *redColor       = [UIColor colorWithRed:1.0f green:102.0f/255.0f blue:102.0f/255.0f alpha:self._colorAlpha];
-    UIColor *carnationColor = [UIColor colorWithRed:1.0f green:111.0f/255.0f blue:207.0f/255.0f alpha:self._colorAlpha];
-    UIColor *greenColor     = [UIColor colorWithRed:204.0f/255.0f green:1.0f blue:102.0f/255.0f alpha:self._colorAlpha];
-    UIColor *orangeColor    = [UIColor colorWithRed:1.0f green:204.0f/255.0f blue:102.0f/255.0f alpha:self._colorAlpha];
-    
-    self._colors            = [NSArray arrayWithObjects:blueColor, redColor, carnationColor, greenColor, orangeColor, nil];
-    self._emptyColor        = [UIColor colorWithRed:150.0f/255.0f green:220.0f/255.0f blue:1.0f alpha:self._colorAlpha];
-    self._backgroundColor   = [UIColor darkGrayColor];
-
     // size of box drawinf area
     CGSize boundsSize = self.size;
     self._boundsSize = boundsSize;
@@ -223,7 +198,7 @@
     self._totalRemoved = 0;
     
     // Draw boxFrame with empty color
-    self._boxFrameNode = [SKSpriteNode spriteNodeWithColor:self._backgroundColor
+    self._boxFrameNode = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor]
                                                       size:self._boxFrameSize];
     self._boxFrameNode.anchorPoint  = CGPointMake(0, 0);
     self._boxFrameNode.position     = CGPointMake(0, self._boundsSize.height - self._boxFrameSize.height - self._topSpaceHeight);
@@ -232,7 +207,7 @@
     
     
     // Draw buttons
-    NSUInteger colorCount = [self._colors count];
+    NSUInteger colorCount = [self._textures count];
     CGSize buttonSize = CGSizeMake(self._boxFrameSize.width / colorCount, self._boxFrameSize.height / colorCount);
     CGPoint buttonStartPoint = CGPointMake(0, self._bottomSpaceHeight);
     
@@ -264,7 +239,7 @@
     
     // add button "new game"
     CGSize ngButtonSize = CGSizeMake(self._boxFrameSize.width / 2, self._topSpaceHeight - 10);
-    self._buttonNewGame = [SKSpriteNode spriteNodeWithColor:self._emptyColor size:ngButtonSize];
+    self._buttonNewGame = [SKSpriteNode spriteNodeWithColor:[UIColor lightGrayColor] size:ngButtonSize];
     self._buttonNewGame.position = CGPointMake(self._boundsSize.width / 2, self._boundsSize.height - self._topSpaceHeight / 2);
     self._buttonNewGame.name = @"button_new_game";
     
@@ -351,7 +326,6 @@
     
     // "remove" fist box
     SKSpriteNode *firstBox = [self._boxPool objectForKey:@"0_0"];
-    firstBox.color = self._emptyColor;
     [firstBox removeAllChildren];
     firstBox.texture = self._gemsTextureEmpty;
     [firstBox.userData setObject:self._emptyColorValue forKey:@"color_key"];
@@ -430,7 +404,6 @@
     int removedCount = 0;
     
     NSMutableArray *targets = [self boxPossibleTargets:boxNode andColorKey:colorKey];
-    NSMutableArray *bombs = [[NSMutableArray alloc] init];
     
     SKAction *fallDownAction    = [SKAction moveToY:-(self._boxSize.height) duration:1.0f];
     fallDownAction.timingMode   = SKActionTimingEaseInEaseOut;
@@ -564,16 +537,11 @@
 
 #pragma mark - Utils
 
-- (UIColor *) randomColor {
-    
-    NSUInteger index = arc4random() % [self._colors count];
-    
-    return [self._colors objectAtIndex:index];
-}
+
 
 - (NSUInteger) randomColorIndex {
     
-    NSUInteger index = arc4random() % [self._colors count];
+    NSUInteger index = arc4random() % [self._textures count];
     
     return index;
 }
