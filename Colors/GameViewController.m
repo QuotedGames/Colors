@@ -7,7 +7,14 @@
 //
 
 #import "GameViewController.h"
-#import "GameScene.h"
+
+
+NSArray *_colors;
+UIColor *_emptyColor;
+int _boxCount = 20;
+int _movesDone = 0;
+
+NSMutableDictionary *_boxPool;
 
 @implementation SKScene (Unarchive)
 
@@ -33,20 +40,47 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _colors = [NSArray arrayWithObjects:[UIColor greenColor], [UIColor blueColor], [UIColor redColor], [UIColor orangeColor], [UIColor yellowColor], nil];
+    _emptyColor = [UIColor lightGrayColor];
+    
+}
 
-    // Configure the view.
-    SKView * skView = (SKView *)self.view;
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    
+}
+
+
+- (void) viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    
+    
+    
+    
+    
+    SKView *skView = [[SKView alloc] initWithFrame:self.view.frame];
+    [self.view addSubview:skView];
     skView.showsFPS = YES;
     skView.showsNodeCount = YES;
-    /* Sprite Kit applies additional optimizations to improve rendering performance */
-    skView.ignoresSiblingOrder = YES;
     
-    // Create and configure the scene.
-    GameScene *scene = [GameScene unarchiveFromFile:@"GameScene"];
-    scene.scaleMode = SKSceneScaleModeAspectFill;
+    GameScene *gameScene = [GameScene sceneWithSize:skView.bounds.size];
+    gameScene.scaleMode = SKSceneScaleModeResizeFill;
     
-    // Present the scene.
-    [skView presentScene:scene];
+    
+    [skView presentScene:gameScene];
+    
+    gameScene.delegateContainerViewController = self;
+    
+    
+    
+    
+    
+    
+    [skView presentScene:gameScene];
 }
 
 - (BOOL)shouldAutorotate
@@ -71,6 +105,17 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+
+
+
+
+#pragma Delegate Methods
+
+- (void) buttonTouchedWithIndex:(int)index
+{
+    
 }
 
 @end
